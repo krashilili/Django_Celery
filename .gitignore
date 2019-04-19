@@ -1,0 +1,8 @@
+.env
+venv
+test
+.idea
+db.sqlite3
+Django_Celery/__pycache__
+register/__pycache__
+register/migrations

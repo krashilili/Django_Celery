@@ -1,0 +1,4 @@
+Celery==4.3.0
+eventlet==0.24.1
+celery-flower==1.0.1
+tornado>=4.2.0,<6.0.0

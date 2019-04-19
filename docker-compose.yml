@@ -1,0 +1,50 @@
+version: '3'
+
+services:
+#  db:
+#    image: postgres:9.6.5
+#    volumes:
+#      - postgres_data:/var/lib/postgresql/data/
+  rabbitmq:
+    image: rabbitmq:3.8-rc-alpine
+    ports:
+      - 5672:5672
+
+  web:
+    build: .
+    command: bash -c "python /code/manage.py migrate --noinput && python /code/manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/code
+    ports:
+      - "8000:8000"
+    depends_on:
+#      - db
+      - rabbitmq
+
+  worker:
+    build: .
+    command: celery -A Django_Celery worker --pool=eventlet -l info
+    volumes:
+      - .:/code
+    depends_on:
+#      - db
+      - rabbitmq
+
+  monitor:
+    image: mher/flower:latest
+#    command: celery flower -A Django_Celery --port=5555
+    ports:
+      - "5555:5555"
+    depends_on:
+      - rabbitmq
+
+#  celery-beat:
+#    build: .
+#    command: celery -A proj beat -l info
+#    volumes:
+#      - .:/code
+#    depends_on:
+#      - redis
+#
+#volumes:
+#  postgres_data:
